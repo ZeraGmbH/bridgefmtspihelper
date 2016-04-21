@@ -1,4 +1,4 @@
-TARGET = ZeraBridgeFmtHelper
+TARGET = QtZeraBridgeFmtHelper
 QT = core
 
 load(qt_module)

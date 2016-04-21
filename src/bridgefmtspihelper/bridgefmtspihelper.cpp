@@ -6,11 +6,11 @@
 
 #include "bridgefmtspihelper.h"
 
-BridgeFmtSpiHelper::BridgeFmtSpiHelper()
+QBridgeFmtSpiHelper::QBridgeFmtSpiHelper()
 {
 }
 
-bool BridgeFmtSpiHelper::BootLCA(QIODevice *pIODevice, const QString &strLCABootFileName)
+bool QBridgeFmtSpiHelper::BootLCA(QIODevice *pIODevice, const QString &strLCABootFileName)
 {
     bool bOK = true;
     QFile fileFpgaBin(strLCABootFileName);
@@ -46,7 +46,7 @@ bool BridgeFmtSpiHelper::BootLCA(QIODevice *pIODevice, const QString &strLCABoot
 #define BRIDGE_SPI_FRAME_LEN 5
 
 /* Note: kernel currently supports synchronous I/O only */
-bool BridgeFmtSpiHelper::ExecCommand(QIODevice *pIODevice, BRIDGE_CMDS cmd, QByteArray *pParamData)
+bool QBridgeFmtSpiHelper::ExecCommand(QIODevice *pIODevice, BRIDGE_CMDS cmd, QByteArray *pParamData)
 {
     bool bOK = true;
     if(!pIODevice->isOpen())
@@ -101,7 +101,7 @@ bool BridgeFmtSpiHelper::ExecCommand(QIODevice *pIODevice, BRIDGE_CMDS cmd, QByt
     return bOK;
 }
 
-bool BridgeFmtSpiHelper::PrepareWriteRam(QIODevice *pIODeviceCtl, const quint32 ui32Address)
+bool QBridgeFmtSpiHelper::PrepareWriteRam(QIODevice *pIODeviceCtl, const quint32 ui32Address)
 {
     m_SendRawData.clear();
     /* cmd */
@@ -125,7 +125,7 @@ bool BridgeFmtSpiHelper::PrepareWriteRam(QIODevice *pIODeviceCtl, const quint32 
     return bOK;
 }
 
-bool BridgeFmtSpiHelper::WriteRam(QIODevice *pIODeviceData, const TRam16Data &data)
+bool QBridgeFmtSpiHelper::WriteRam(QIODevice *pIODeviceData, const TRam16Data &data)
 {
     QByteArray send16Word;
     bool bOK = true;
@@ -146,7 +146,7 @@ bool BridgeFmtSpiHelper::WriteRam(QIODevice *pIODeviceData, const TRam16Data &da
     return bOK;
 }
 
-bool BridgeFmtSpiHelper::PrepareReadRam(QIODevice *pIODeviceCtl, const quint32 ui32Address)
+bool QBridgeFmtSpiHelper::PrepareReadRam(QIODevice *pIODeviceCtl, const quint32 ui32Address)
 {
     m_SendRawData.clear();
     /* cmd */
@@ -168,7 +168,7 @@ bool BridgeFmtSpiHelper::PrepareReadRam(QIODevice *pIODeviceCtl, const quint32 u
     return bOK;
 }
 
-bool BridgeFmtSpiHelper::ReadRam(QIODevice *pIODeviceData, TRam16Data &data, const quint32 ui32WordCount)
+bool QBridgeFmtSpiHelper::ReadRam(QIODevice *pIODeviceData, TRam16Data &data, const quint32 ui32WordCount)
 {
     bool bOK = true;
     m_ReceiveRawData.clear();

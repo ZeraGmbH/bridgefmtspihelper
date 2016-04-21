@@ -3,11 +3,11 @@
 
 #include "bridgefmtspihelper.h"
 
-class QSPIDevicePrivate
+class BridgeFmtSpiHelperPrivate
 {
 public:
-    QSPIDevicePrivate();
-    virtual ~QSPIDevicePrivate();
+    BridgeFmtSpiHelperPrivate();
+    virtual ~BridgeFmtSpiHelperPrivate();
 };
 
 #endif // BRIDGEFMTSPIHELPER_P_H

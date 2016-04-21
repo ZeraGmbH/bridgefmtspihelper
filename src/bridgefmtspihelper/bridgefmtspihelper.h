@@ -18,10 +18,10 @@ enum BRIDGE_CMDS
 
 typedef QVector<qint16> TRam16Data;
 
-class BRIDGEFMTSPIHELPERSHARED_EXPORT BridgeFmtSpiHelper
+class BRIDGEFMTSPIHELPERSHARED_EXPORT QBridgeFmtSpiHelper
 {
 public:
-    BridgeFmtSpiHelper();
+    QBridgeFmtSpiHelper();
     bool BootLCA(QIODevice *pIODevice, const QString& strLCABootFileName);
     bool ExecCommand(QIODevice *pIODevice, enum BRIDGE_CMDS cmd, QByteArray *pParamData = NULL);
 

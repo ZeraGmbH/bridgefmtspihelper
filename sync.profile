@@ -1,5 +1,5 @@
 %modules = (
-    "ZeraBridgeFmtHelper" => "$basedir/src/bridgefmtspihelper",
+    "QtZeraBridgeFmtHelper" => "$basedir/src/bridgefmtspihelper",
 );
 
 %dependencies = (
