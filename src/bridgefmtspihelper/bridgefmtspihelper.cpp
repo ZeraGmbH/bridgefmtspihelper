@@ -133,9 +133,11 @@ bool QBridgeFmtSpiHelper::WriteRam(QIODevice *pIODeviceData, const TRam16Data &d
     for(int iWord=0; iWord<data.count(); iWord++)
     {
         send16Word.clear();
-        qint16 i16Val = data[iWord];
-        send16Word.append((char)(i16Val>>8));
-        send16Word.append((char)(i16Val & 0xFF));
+        quint16 ui16Val = data[iWord];
+        quint8 ui8Val = ui16Val/256;
+        send16Word.append(ui8Val);
+        ui8Val = ui16Val & 0xFF;
+        send16Word.append(ui8Val);
         if(pIODeviceData->write(send16Word) != send16Word.count())
         {
             bOK = false;
@@ -174,7 +176,8 @@ bool QBridgeFmtSpiHelper::ReadRam(QIODevice *pIODeviceData, TRam16Data &data, co
     m_ReceiveRawData.clear();
     data.resize(ui32WordCount);
     QByteArray receive16Word;
-    qint16 i16Val;
+    quint16 ui16Val;
+    quint8 ui8Val;
     /* n-16bit transfers */
     for(quint32 ui32Word=0; ui32Word<ui32WordCount; ui32Word++)
     {
@@ -182,8 +185,14 @@ bool QBridgeFmtSpiHelper::ReadRam(QIODevice *pIODeviceData, TRam16Data &data, co
         if(receive16Word.size() == 2)
         {
             m_ReceiveRawData.append(receive16Word);
-            i16Val = (receive16Word[0] << 8 ) + receive16Word[1];
-            data[ui32Word] = i16Val;
+            // This looks odd but we have
+            // * signed char on PC (QByteArray)
+            // * endianess??
+            ui8Val = receive16Word[0];
+            ui16Val = 256 * ui8Val;
+            ui8Val = receive16Word[1];
+            ui16Val += ui8Val;
+            data[ui32Word] = ui16Val;
         }
         else
         {
