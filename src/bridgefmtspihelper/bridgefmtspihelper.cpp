@@ -8,6 +8,13 @@
 
 QBridgeFmtSpiHelper::QBridgeFmtSpiHelper()
 {
+    // default => compatible to old FPGAs with word by word transaction
+    m_ui32RAMBlockWordSize = 1;
+}
+
+void QBridgeFmtSpiHelper::SetRAMBlockWordSize(quint32 ui32RAMBlockWordSize)
+{
+    m_ui32RAMBlockWordSize = ui32RAMBlockWordSize;
 }
 
 bool QBridgeFmtSpiHelper::BootLCA(QIODevice *pIODevice, const QString &strLCABootFileName)
@@ -127,22 +134,28 @@ bool QBridgeFmtSpiHelper::PrepareWriteRam(QIODevice *pIODeviceCtl, const quint32
 
 bool QBridgeFmtSpiHelper::WriteRam(QIODevice *pIODeviceData, const TRam16Data &data)
 {
-    QByteArray send16Word;
+    QByteArray send16Block;
     bool bOK = true;
-    /* n-16bit transfers */
-    for(int iWord=0; iWord<data.count(); iWord++)
+    quint32 ui32CountTransfers = data.count();
+    /* 16bit-word transfers */
+    for(quint32 ui32Word=0; ui32Word<ui32CountTransfers; ui32Word++)
     {
-        send16Word.clear();
-        quint16 ui16Val = data[iWord];
+        quint16 ui16Val = data[ui32Word];
         quint8 ui8Val = ui16Val/256;
-        send16Word.append(ui8Val);
+        send16Block.append(ui8Val);
         ui8Val = ui16Val & 0xFF;
-        send16Word.append(ui8Val);
-        if(pIODeviceData->write(send16Word) != send16Word.count())
+        send16Block.append(ui8Val);
+        // SPI transfer required?
+        int ui32WordInBlock = ui32Word % m_ui32RAMBlockWordSize;
+        if(ui32WordInBlock==0 || ui32Word>=ui32CountTransfers-1)
         {
-            bOK = false;
-            qWarning("Sending data to RAM was not completed!");
-            break;
+            if(pIODeviceData->write(send16Block) != send16Block.count())
+            {
+                bOK = false;
+                qWarning("Sending data to RAM was not completed!");
+                break;
+            }
+            send16Block.clear();
         }
     }
     return bOK;
@@ -175,31 +188,35 @@ bool QBridgeFmtSpiHelper::ReadRam(QIODevice *pIODeviceData, TRam16Data &data, co
     bool bOK = true;
     m_ReceiveRawData.clear();
     data.resize(ui32WordCount);
-    QByteArray receive16Word;
+    QByteArray receive16Block;
     quint16 ui16Val;
     quint8 ui8Val;
-    /* n-16bit transfers */
+    /* 16bit-word transfers */
     for(quint32 ui32Word=0; ui32Word<ui32WordCount; ui32Word++)
     {
-        receive16Word = pIODeviceData->read(2);
-        if(receive16Word.size() == 2)
+        int ui32WordInBlock = ui32Word % m_ui32RAMBlockWordSize;
+        // SPI read required?
+        if(ui32WordInBlock == 0)
         {
-            m_ReceiveRawData.append(receive16Word);
-            // This looks odd but we have
-            // * signed char on PC (QByteArray)
-            // * endianess??
-            ui8Val = receive16Word[0];
-            ui16Val = 256 * ui8Val;
-            ui8Val = receive16Word[1];
-            ui16Val += ui8Val;
-            data[ui32Word] = ui16Val;
+            quint32 ui32WordsToRead = qMin(ui32WordCount-ui32Word, m_ui32RAMBlockWordSize);
+            receive16Block = pIODeviceData->read(2*ui32WordsToRead);
+            if((quint32)receive16Block.size() != 2*ui32WordsToRead)
+            {
+                bOK = false;
+                qWarning("Reading data to RAM was not completed!");
+                break;
+            }
+            m_ReceiveRawData.append(receive16Block);
         }
-        else
-        {
-            bOK = false;
-            qWarning("Reading data to RAM was not completed!");
-            break;
-        }
+
+        // This looks odd but we have
+        // * signed char on PC (QByteArray)
+        // * endianess??
+        ui8Val = receive16Block[0 + 2*ui32WordInBlock];
+        ui16Val = 256 * ui8Val;
+        ui8Val = receive16Block[1 + 2*ui32WordInBlock];
+        ui16Val += ui8Val;
+        data[ui32Word] = ui16Val;
     }
     return bOK;
 }

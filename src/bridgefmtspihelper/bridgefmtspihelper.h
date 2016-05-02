@@ -22,6 +22,8 @@ class BRIDGEFMTSPIHELPERSHARED_EXPORT QBridgeFmtSpiHelper
 {
 public:
     QBridgeFmtSpiHelper();
+    void SetRAMBlockWordSize(quint32 ui32RAMBlockWordSize);
+
     bool BootLCA(QIODevice *pIODevice, const QString& strLCABootFileName);
     bool ExecCommand(QIODevice *pIODevice, enum BRIDGE_CMDS cmd, QByteArray *pParamData = NULL);
 
@@ -36,6 +38,7 @@ public:
 protected:
     QByteArray m_SendRawData;
     QByteArray m_ReceiveRawData;
+    quint32 m_ui32RAMBlockWordSize;
 };
 
 #endif // BRIDGEFMTSPIHELPER_H
