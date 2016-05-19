@@ -50,8 +50,6 @@ bool QBridgeFmtSpiHelper::BootLCA(QIODevice *pIODevice, const QString &strLCABoo
     return bOK;
 }
 
-#define BRIDGE_SPI_FRAME_LEN 5
-
 /* Note: kernel currently supports synchronous I/O only */
 bool QBridgeFmtSpiHelper::ExecCommand(QIODevice *pIODevice, BRIDGE_CMDS cmd, QByteArray *pParamData)
 {

@@ -7,6 +7,8 @@
 #include <QIODevice>
 #include "bridgefmtspihelper_global.h"
 
+#define BRIDGE_SPI_FRAME_LEN 5
+
 enum BRIDGE_CMDS
 {
     BRIDGE_CMD_READ_VERSION         = 0x00,
