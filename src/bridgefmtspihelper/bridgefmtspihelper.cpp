@@ -144,8 +144,8 @@ bool QBridgeFmtSpiHelper::WriteRam(QIODevice *pIODeviceData, const TRam16Data &d
         ui8Val = ui16Val & 0xFF;
         send16Block.append(ui8Val);
         // SPI transfer required?
-        int ui32WordInBlock = ui32Word % m_ui32RAMBlockWordSize;
-        if(ui32WordInBlock==0 || ui32Word>=ui32CountTransfers-1)
+        quint32 ui32WordInBlock = ui32Word % m_ui32RAMBlockWordSize;
+        if(ui32WordInBlock==m_ui32RAMBlockWordSize-1 || ui32Word>=ui32CountTransfers-1)
         {
             if(pIODeviceData->write(send16Block) != send16Block.count())
             {
@@ -192,9 +192,9 @@ bool QBridgeFmtSpiHelper::ReadRam(QIODevice *pIODeviceData, TRam16Data &data, co
     /* 16bit-word transfers */
     for(quint32 ui32Word=0; ui32Word<ui32WordCount; ui32Word++)
     {
-        int ui32WordInBlock = ui32Word % m_ui32RAMBlockWordSize;
+        quint32 ui32WordInBlock = ui32Word % m_ui32RAMBlockWordSize;
         // SPI read required?
-        if(ui32WordInBlock == 0)
+        if(ui32WordInBlock==m_ui32RAMBlockWordSize-1 || ui32Word>=ui32WordCount-1)
         {
             quint32 ui32WordsToRead = qMin(ui32WordCount-ui32Word, m_ui32RAMBlockWordSize);
             receive16Block = pIODeviceData->read(2*ui32WordsToRead);
