@@ -184,37 +184,42 @@ bool QBridgeFmtSpiHelper::PrepareReadRam(QIODevice *pIODeviceCtl, const quint32 
 bool QBridgeFmtSpiHelper::ReadRam(QIODevice *pIODeviceData, TRam16Data &data, const quint32 ui32WordCount)
 {
     bool bOK = true;
-    m_ReceiveRawData.clear();
-    data.resize(ui32WordCount);
-    QByteArray receive16Block;
-    quint16 ui16Val;
-    quint8 ui8Val;
-    /* 16bit-word transfers */
-    for(quint32 ui32Word=0; ui32Word<ui32WordCount; ui32Word++)
-    {
-        quint32 ui32WordInBlock = ui32Word % m_ui32RAMBlockWordSize;
-        // SPI read required?
-        if(ui32WordInBlock==m_ui32RAMBlockWordSize-1 || ui32Word>=ui32WordCount-1)
-        {
-            quint32 ui32WordsToRead = qMin(ui32WordCount-ui32Word, m_ui32RAMBlockWordSize);
-            receive16Block = pIODeviceData->read(2*ui32WordsToRead);
-            if((quint32)receive16Block.size() != 2*ui32WordsToRead)
-            {
-                bOK = false;
-                qWarning("Reading data to RAM was not completed!");
-                break;
-            }
-            m_ReceiveRawData.append(receive16Block);
-        }
 
-        // This looks odd but we have
-        // * signed char on PC (QByteArray)
-        // * endianess??
-        ui8Val = receive16Block[0 + 2*ui32WordInBlock];
-        ui16Val = 256 * ui8Val;
-        ui8Val = receive16Block[1 + 2*ui32WordInBlock];
-        ui16Val += ui8Val;
-        data[ui32Word] = ui16Val;
+    m_ReceiveRawData.clear();
+    QByteArray receive16Block;
+    // Read raw data blockwise
+    quint32 ui32WordsToRead = ui32WordCount;
+    while(ui32WordsToRead > 0)
+    {
+        quint32 ui32WordsInBlock = qMin(m_ui32RAMBlockWordSize, ui32WordsToRead);
+        receive16Block = pIODeviceData->read(2*ui32WordsInBlock);
+        if((quint32)receive16Block.size() != 2*ui32WordsInBlock)
+        {
+            bOK = false;
+            qWarning("Reading data to RAM was not completed!");
+            break;
+        }
+        m_ReceiveRawData.append(receive16Block);
+        ui32WordsToRead -= ui32WordsInBlock;
+    }
+    if(bOK)
+    {
+        // convert to 16bit data
+        quint16 ui16Val;
+        quint8 ui8Val;
+        if((quint32)data.size() != ui32WordCount)
+            data.resize(ui32WordCount);
+        for(quint32 ui32Word=0; ui32Word<ui32WordCount; ui32Word++)
+        {
+            // This looks odd but we have
+            // * signed char on PC (QByteArray)
+            // * endianess??
+            ui8Val = m_ReceiveRawData[0 + 2*ui32Word];
+            ui16Val = 256 * ui8Val;
+            ui8Val = m_ReceiveRawData[1 + 2*ui32Word];
+            ui16Val += ui8Val;
+            data[ui32Word] = ui16Val;
+        }
     }
     return bOK;
 }
