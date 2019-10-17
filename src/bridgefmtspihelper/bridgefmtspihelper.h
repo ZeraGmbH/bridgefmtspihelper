@@ -27,7 +27,7 @@ public:
     void SetRAMBlockWordSize(quint32 ui32RAMBlockWordSize);
 
     bool BootLCA(QIODevice *pIODevice, const QString& strLCABootFileName);
-    bool ExecCommand(QIODevice *pIODevice, enum BRIDGE_CMDS cmd, QByteArray *pParamData = Q_NULLPTR);
+    bool ExecCommand(QIODevice *pIODevice, enum BRIDGE_CMDS cmd, QByteArray *pParamData = nullptr);
 
     bool PrepareWriteRam(QIODevice *pIODeviceCtl, const quint32 ui32Address);
     bool WriteRam(QIODevice *pIODeviceData, const TRam16Data& data);
