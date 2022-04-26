@@ -5,7 +5,8 @@
 #include <QByteArray>
 #include <QString>
 #include <QIODevice>
-#include "bridgefmtspihelper_global.h"
+
+#include <bridgefmtspihelper_export.h>
 
 #define BRIDGE_SPI_FRAME_LEN 5
 
@@ -20,7 +21,7 @@ enum BRIDGE_CMDS
 
 typedef QVector<qint16> TRam16Data;
 
-class BRIDGEFMTSPIHELPERSHARED_EXPORT QBridgeFmtSpiHelper
+class BRIDGEFMTSPIHELPER_EXPORT QBridgeFmtSpiHelper
 {
 public:
     QBridgeFmtSpiHelper();

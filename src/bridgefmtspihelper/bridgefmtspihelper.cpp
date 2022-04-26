@@ -1,10 +1,9 @@
+#include "bridgefmtspihelper.h"
 #include <unistd.h>
 
 #include <QIODevice>
 #include <QByteArray>
 #include <QFile>
-
-#include "bridgefmtspihelper.h"
 
 QBridgeFmtSpiHelper::QBridgeFmtSpiHelper()
 {

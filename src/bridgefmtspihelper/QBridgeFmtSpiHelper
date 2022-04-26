@@ -1,0 +1,6 @@
+#ifndef QBridgeFmtSpiHelper_H
+#define QBridgeFmtSpiHelper_H
+
+#include "bridgefmtspihelper.h"
+
+#endif // QBridgeFmtSpiHelper_H
