@@ -26,7 +26,7 @@ target_link_libraries(bridgefmtspihelper
 # announce headers - target perspective
 target_include_directories(bridgefmtspihelper
     PUBLIC
-    $<INSTALL_INTERFACE:include/bridgefmtspihelper>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/bridgefmtspihelper>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
     INTERFACE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
