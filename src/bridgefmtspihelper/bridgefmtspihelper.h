@@ -1,12 +1,11 @@
 #ifndef BRIDGEFMTSPIHELPER_H
 #define BRIDGEFMTSPIHELPER_H
 
+#include <bridgefmtspihelper_export.h>
 #include <QVector>
 #include <QByteArray>
 #include <QString>
 #include <QIODevice>
-
-#include <bridgefmtspihelper_export.h>
 
 #define BRIDGE_SPI_FRAME_LEN 5
 
