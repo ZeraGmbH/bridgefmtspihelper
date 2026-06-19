@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.16)
 
 project(bridgefmtspihelper LANGUAGES CXX)
 
@@ -13,7 +13,7 @@ set(PROJECT_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT
 include(FeatureSummary)
 include(GNUInstallDirs)
 
-find_package(Qt5 REQUIRED COMPONENTS Core )
+find_package(Qt5 REQUIRED COMPONENTS Core)
 
 add_subdirectory(src)
 
